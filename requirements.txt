@@ -1,0 +1,5 @@
+# STRYK requirements.txt
+# Author: MERO  telegram @QP4RM  mero@merobest.xyz
+torch>=2.2
+numpy>=1.26
+onnx>=1.16

@@ -1,0 +1,18 @@
+# STRYK pyproject.toml
+# Author: MERO  telegram @QP4RM  mero@merobest.xyz
+[project]
+name = "stryk-fc27"
+version = "2.0.0"
+description = "FC27 physics + PPO self-play SDK"
+requires-python = ">=3.11"
+dependencies = ["torch>=2.2", "numpy>=1.26", "onnx>=1.16"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["stryk"]
+
+[project.scripts]
+stryk = "stryk.cli:main"

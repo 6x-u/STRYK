@@ -1,0 +1,4 @@
+# STRYK kaggle_requirements.txt
+torch>=2.2
+numpy>=1.26
+onnx>=1.16
