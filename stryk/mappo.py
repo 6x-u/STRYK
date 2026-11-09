@@ -23,15 +23,16 @@ def gae_per_agent(rewards: np.ndarray, dones: np.ndarray, values: np.ndarray,
 
 def mappo_update(policy, optimizer, batch: dict, adv: np.ndarray, ret: np.ndarray, cfg, step: int) -> dict:
     # batch arrays: [T,N,...] — flatten T*N for minibatches :)
-    ent = torch.as_tensor(batch["entities"].reshape(-1, batch["entities"].shape[-2], batch["entities"].shape[-1]), dtype=torch.float32)
-    msk = torch.as_tensor(batch["mask"].reshape(-1, batch["mask"].shape[-1]), dtype=torch.float32)
-    glo = torch.as_tensor(batch["global"].reshape(-1, batch["global"].shape[-1]), dtype=torch.float32)
-    ams = torch.as_tensor(batch["action_mask"].reshape(-1, batch["action_mask"].shape[-1]), dtype=torch.float32)
-    cont = torch.as_tensor(batch["cont"].reshape(-1, batch["cont"].shape[-1]), dtype=torch.float32)
-    disc = torch.as_tensor(batch["disc"].reshape(-1), dtype=torch.long)
-    old_lp = torch.as_tensor(batch["logp"].reshape(-1), dtype=torch.float32)
-    adv_t = torch.as_tensor(adv.reshape(-1), dtype=torch.float32)
-    ret_t = torch.as_tensor(ret.reshape(-1), dtype=torch.float32)
+    dev = next(policy.parameters()).device
+    ent = torch.as_tensor(batch["entities"].reshape(-1, batch["entities"].shape[-2], batch["entities"].shape[-1]), dtype=torch.float32, device=dev)
+    msk = torch.as_tensor(batch["mask"].reshape(-1, batch["mask"].shape[-1]), dtype=torch.float32, device=dev)
+    glo = torch.as_tensor(batch["global"].reshape(-1, batch["global"].shape[-1]), dtype=torch.float32, device=dev)
+    ams = torch.as_tensor(batch["action_mask"].reshape(-1, batch["action_mask"].shape[-1]), dtype=torch.float32, device=dev)
+    cont = torch.as_tensor(batch["cont"].reshape(-1, batch["cont"].shape[-1]), dtype=torch.float32, device=dev)
+    disc = torch.as_tensor(batch["disc"].reshape(-1), dtype=torch.long, device=dev)
+    old_lp = torch.as_tensor(batch["logp"].reshape(-1), dtype=torch.float32, device=dev)
+    adv_t = torch.as_tensor(adv.reshape(-1), dtype=torch.float32, device=dev)
+    ret_t = torch.as_tensor(ret.reshape(-1), dtype=torch.float32, device=dev)
     n = ent.shape[0]
     mb = max(1, int(cfg.minibatch))
     if cfg.total_updates > 0:

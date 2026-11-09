@@ -61,7 +61,7 @@ class TrainCfg:
     curriculum: bool = True
     selfplay: bool = True
     opponent_style: str = "balanced"
-    device: str = "cpu"
+    device: str = "cuda"  # gpu first — set DEVICE=cpu only for local smoke tests
     checkpoint: str = "checkpoints/last.pt"
     telemetry_csv: str = "checkpoints/telemetry.csv"
     # -- mappo / wall-clock knobs, defaults keep old single-agent loads happy

@@ -1,4 +1,4 @@
-{
+﻿{
   "mode": "5v5",
   "stadium": "etihad_fc27",
   "seed": 2026,
@@ -20,7 +20,8 @@
   "curriculum": true,
   "selfplay": true,
   "opponent_style": "press",
-  "device": "cpu",
+  "device": "cuda",
   "checkpoint": "checkpoints/club5.pt",
   "telemetry_csv": "checkpoints/telemetry.csv"
 }
+

@@ -42,16 +42,24 @@ def main() -> None:
     hours = float(os.environ.get("TRAIN_HOURS", os.environ.get("KAGGLE_TIME", "8")))
     updates = int(os.environ.get("UPDATES", "0"))
     model = os.environ.get("MODEL_NAME", "merobot")
+    device = os.environ.get("DEVICE", "cuda").lower()
     gpu = torch.cuda.is_available()
-    print(f"[training] cuda={gpu} torch={torch.__version__} hours={hours} model={model}", flush=True)
+    print(f"[training] cuda={gpu} torch={torch.__version__} hours={hours} model={model} device={device}", flush=True)
     if gpu:
         print(f"[training] device={torch.cuda.get_device_name(0)}", flush=True)
+    elif device == "cuda":
+        raise RuntimeError(
+            "DEVICE=cuda but no GPU found. "
+            "On Kaggle set Accelerator=GPU, or install torch cu130 locally. "
+            "For a CPU smoke run use DEVICE=cpu."
+        )
     cfg_path = find_config()
     if cfg_path:
         cfg = load_config(cfg_path)
     else:
         cfg = TrainCfg(mode="11v11", stadium="etihad_fc27")
     cfg.mode = "11v11"  # this entry trains the full team, not 5v5 :)
+    cfg.device = device
     cfg.model_name = model
     cfg.use_mappo = True
     cfg.train_hours = hours
@@ -64,14 +72,14 @@ def main() -> None:
     cfg.models_root = str(out_root / "Models")
     cfg.telemetry_csv = str(out_root / "Models" / "Metadata" / "telemetry.csv")
     # speed up on gpu without touching physics — same 240Hz/60Hz FC27 sim, just bigger batches :)
-    if gpu:
+    if gpu and device == "cuda":
         if cfg.rollout_steps < 8192:
             cfg.rollout_steps = 8192
         if cfg.minibatch < 2048:
             cfg.minibatch = 2048
         if cfg.hidden < 256:
             cfg.hidden = 256
-    else:
+    elif device == "cpu":
         cfg.rollout_steps = min(int(cfg.rollout_steps), 2048)
         cfg.hidden = min(int(cfg.hidden), 128)
     # resume nearest merobot_latest if present so restarts do not start dumb again

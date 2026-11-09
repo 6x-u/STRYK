@@ -1,4 +1,4 @@
-{
+﻿{
   "mode": "1v1",
   "stadium": "dome_fc27",
   "seed": 2026,
@@ -20,7 +20,8 @@
   "curriculum": true,
   "selfplay": true,
   "opponent_style": "counter",
-  "device": "cpu",
+  "device": "cuda",
   "checkpoint": "checkpoints/duel1.pt",
   "telemetry_csv": "checkpoints/telemetry.csv"
 }
+

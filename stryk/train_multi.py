@@ -22,13 +22,29 @@ from .version import __version__
 
 
 def _pick_device(cfg: TrainCfg) -> str:
-    if torch.cuda.is_available():
-        return "cuda"
-    return "cpu"
+    want = str(getattr(cfg, "device", "cuda") or "cuda").lower()
+    if want in ("cuda", "auto"):
+        if torch.cuda.is_available():
+            return "cuda"
+        if want == "cuda":
+            raise RuntimeError(
+                "device=cuda but torch.cuda.is_available() is False. "
+                "install the GPU build (Kaggle already has cu130) or set DEVICE=cpu for a local smoke run."
+            )
+        return "cpu"
+    if want == "cpu":
+        return "cpu"
+    return want
 
 
 def train_multi(cfg: TrainCfg, resume: str | None = None) -> dict:
     dev = _pick_device(cfg)
+    if dev == "cuda":
+        torch.backends.cudnn.benchmark = True
+        try:
+            torch.set_float32_matmul_precision("high")
+        except Exception:
+            pass
     # kaggle gpus are greedy — scale the rollout up when we actually have one :)
     rollout = int(cfg.rollout_steps)
     if dev == "cuda" and rollout < 4096:

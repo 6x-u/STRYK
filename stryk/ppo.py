@@ -5,11 +5,12 @@ import torch
 
 
 def ppo_update(policy, optimizer, batch: dict, cfg, step: int) -> dict:
-    obs = torch.as_tensor(batch["obs"], dtype=torch.float32)
-    act = torch.as_tensor(batch["act"], dtype=torch.float32)
-    old_lp = torch.as_tensor(batch["logp"], dtype=torch.float32)
-    ret = torch.as_tensor(batch["ret"], dtype=torch.float32)
-    adv = torch.as_tensor(batch["adv"], dtype=torch.float32)
+    dev = next(policy.parameters()).device
+    obs = torch.as_tensor(batch["obs"], dtype=torch.float32, device=dev)
+    act = torch.as_tensor(batch["act"], dtype=torch.float32, device=dev)
+    old_lp = torch.as_tensor(batch["logp"], dtype=torch.float32, device=dev)
+    ret = torch.as_tensor(batch["ret"], dtype=torch.float32, device=dev)
+    adv = torch.as_tensor(batch["adv"], dtype=torch.float32, device=dev)
     n = obs.shape[0]
     mb = max(1, int(cfg.minibatch))
     order = np.random.permutation(n)

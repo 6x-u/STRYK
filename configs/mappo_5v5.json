@@ -19,7 +19,7 @@
   "curriculum": true,
   "selfplay": true,
   "opponent_style": "balanced",
-  "device": "auto",
+  "device": "cuda",
   "use_mappo": true,
   "train_hours": 0.0,
   "models_root": "Models",
@@ -27,4 +27,6 @@
   "checkpoint": "Models/Checkpoints/STRYK_latest.pt",
   "telemetry_csv": "Models/Metadata/telemetry.csv"
 }
+
+
 

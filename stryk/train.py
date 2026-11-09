@@ -18,7 +18,14 @@ from .version import __version__
 
 
 def _device(cfg: TrainCfg) -> str:
-    return cfg.device if torch.cuda.is_available() else "cpu"
+    want = str(getattr(cfg, "device", "cuda") or "cuda").lower()
+    if want == "cpu":
+        return "cpu"
+    if torch.cuda.is_available():
+        return "cuda"
+    if want == "cuda":
+        raise RuntimeError("device=cuda but no GPU found. Use DEVICE=cpu for a local smoke run.")
+    return "cpu"
 
 
 def train(cfg: TrainCfg, resume: str | None = None) -> dict:
